@@ -34,7 +34,7 @@
         <attr name="dotAngle" format="float" />
     </declare-styleable>
 
-    <declare-styleable name="DefaultCloseView">
+    <declare-styleable name="EasyFloatDefaultCloseView">
         <!--区域默认颜色-->
         <attr name="normalColor" format="color" />
         <!--区域选中颜色-->
