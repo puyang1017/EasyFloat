@@ -43,7 +43,7 @@ class DefaultCloseView @JvmOverloads constructor(
         context.theme.obtainStyledAttributes(attrs, R.styleable.EasyFloatDefaultCloseView, 0, 0).apply {
             normalColor = getColor(R.styleable.EasyFloatDefaultCloseView_normalColor, normalColor)
             inRangeColor = getColor(R.styleable.EasyFloatDefaultCloseView_inRangeColor, inRangeColor)
-            shapeType = getInt(R.styleable.EasyFloatDefaultCloseView_shapeType, shapeType)
+            shapeType = getInt(R.styleable.EasyFloatDefaultCloseView_easyFloatShapeType, shapeType)
             zoomSize = getDimension(R.styleable.EasyFloatDefaultCloseView_zoomSize, zoomSize)
         }.recycle()
 
