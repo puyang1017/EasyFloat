@@ -34,6 +34,8 @@ data class FloatConfig(
     var hasEditText: Boolean = false,
     // 状态栏沉浸
     var immersionStatusBar: Boolean = false,
+    //强制横竖屏模式
+    var forceLandscape: Boolean = false,
 
     // 浮窗的吸附方式（默认不吸附，拖到哪里是哪里）
     var sidePattern: SidePattern = SidePattern.DEFAULT,

@@ -169,6 +169,12 @@ class EasyFloat {
 
         // 创建浮窗数据类，方便管理配置
         private val config = FloatConfig()
+        /**
+         * 设置横屏
+         * @param forceLandscape 强制按横屏 只对android12以上生效
+         */
+        fun setForceLandscape(forceLandscape: Boolean) =
+            apply { config.forceLandscape = forceLandscape }
 
         /**
          * 设置浮窗的吸附模式

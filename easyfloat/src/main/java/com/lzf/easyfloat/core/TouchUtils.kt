@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Rect
+import android.os.Build
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -202,8 +203,19 @@ internal class TouchUtils(val context: Context, val config: FloatConfig) {
      */
     private fun initBoarderValue(view: View, params: LayoutParams) {
         // 屏幕宽高需要每次获取，可能会有屏幕旋转、虚拟导航栏的状态变化
-        parentWidth = DisplayUtils.getScreenWidth(context)
-        parentHeight = config.displayHeight.getDisplayRealHeight(context)
+        if (Build.VERSION.SDK_INT >= 31) {
+            if (config.forceLandscape) {
+                parentHeight = DisplayUtils.getScreenWidth(context)
+                parentWidth = config.displayHeight.getDisplayRealHeight(context)
+            } else {
+                parentWidth = DisplayUtils.getScreenWidth(context)
+                parentHeight = config.displayHeight.getDisplayRealHeight(context)
+            }
+        } else {
+            parentWidth = DisplayUtils.getScreenWidth(context)
+            parentHeight = config.displayHeight.getDisplayRealHeight(context)
+        }
+
         // 获取在整个屏幕内的绝对坐标
         view.getLocationOnScreen(location)
         // 通过绝对高度和相对高度比较，判断包含顶部状态栏

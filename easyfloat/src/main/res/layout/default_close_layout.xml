@@ -6,7 +6,6 @@
         android:paddingHorizontal="50dp"
         app:inRangeColor="#99FF0000"
         app:normalColor="#99000000"
-        app:shapeType="oval"
         app:zoomSize="4dp">
 
     <TextView

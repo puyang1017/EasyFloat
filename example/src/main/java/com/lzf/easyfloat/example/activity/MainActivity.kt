@@ -201,6 +201,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             .setShowPattern(ShowPattern.ALL_TIME)
             .setSidePattern(SidePattern.RESULT_SIDE)
             .setImmersionStatusBar(true)
+//            .setForceLandscape(true)
             .setGravity(Gravity.END, -20, 10)
             .setLayout(R.layout.float_app) {
                 it.findViewById<ImageView>(R.id.ivClose).setOnClickListener {
