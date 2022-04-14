@@ -234,8 +234,10 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         view.getLocationOnScreen(location)
         // 通过绝对高度和相对高度比较，判断包含顶部状态栏
         val statusBarHeight = if (location[1] > params.y) DisplayUtils.statusBarHeight(view) else 0
-        val parentBottom =
-            config.displayHeight.getDisplayRealHeight(context) - statusBarHeight
+        var parentBottom = config.displayHeight.getDisplayRealHeight(context) - statusBarHeight
+        if (config.forceLandscape){
+             parentBottom = parentRect.bottom
+        }
         when (config.gravity) {
             // 右上
             Gravity.END, Gravity.END or Gravity.TOP, Gravity.RIGHT, Gravity.RIGHT or Gravity.TOP ->
