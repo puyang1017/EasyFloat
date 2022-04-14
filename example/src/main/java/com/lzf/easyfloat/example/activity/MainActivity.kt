@@ -101,9 +101,11 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     @SuppressLint("SetTextI18n")
     private fun showActivityFloat(tag: String) {
         EasyFloat.with(this)
+            .setShowPattern(ShowPattern.ALL_TIME)
+//            .setForceLandscape(true)
             .setSidePattern(SidePattern.RESULT_HORIZONTAL)
             .setImmersionStatusBar(true)
-            .setGravity(Gravity.END, 0, 10)
+            .setGravity(Gravity.END, 0, 0)
             // 传入View，传入布局文件皆可，如：MyCustomView(this)、R.layout.float_custom
             .setLayout(MyCustomView(this)) {
                 it.findViewById<TextView>(R.id.textView).setOnClickListener { toast() }
@@ -209,6 +211,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 }
                 it.findViewById<TextView>(R.id.tvOpenMain).setOnClickListener {
                     startActivity<MainActivity>(this)
+//                    showActivityFloat(TAG_1)
                 }
                 it.findViewById<CheckBox>(R.id.checkbox)
                     .setOnCheckedChangeListener { _, isChecked -> EasyFloat.dragEnable(isChecked) }

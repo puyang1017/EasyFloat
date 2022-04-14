@@ -234,42 +234,80 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         view.getLocationOnScreen(location)
         // 通过绝对高度和相对高度比较，判断包含顶部状态栏
         val statusBarHeight = if (location[1] > params.y) DisplayUtils.statusBarHeight(view) else 0
-        var parentBottom = config.displayHeight.getDisplayRealHeight(context) - statusBarHeight
-        if (config.forceLandscape){
-             parentBottom = parentRect.bottom
-        }
         when (config.gravity) {
             // 右上
-            Gravity.END, Gravity.END or Gravity.TOP, Gravity.RIGHT, Gravity.RIGHT or Gravity.TOP ->
-                params.x = parentRect.right - view.width
+            Gravity.END, Gravity.END or Gravity.TOP, Gravity.RIGHT, Gravity.RIGHT or Gravity.TOP -> {
+                if (config.forceLandscape) {
+                    params.x = parentRect.bottom - view.width
+                } else {
+                    params.x = parentRect.right - view.width
+                }
+            }
             // 左下
-            Gravity.START or Gravity.BOTTOM, Gravity.BOTTOM, Gravity.LEFT or Gravity.BOTTOM ->
-                params.y = parentBottom - view.height
+            Gravity.START or Gravity.BOTTOM, Gravity.BOTTOM, Gravity.LEFT or Gravity.BOTTOM -> {
+                if (config.forceLandscape) {
+                    params.y = parentRect.right - view.height
+                } else {
+                    params.y = parentRect.bottom - view.height
+                }
+            }
+
             // 右下
             Gravity.END or Gravity.BOTTOM, Gravity.RIGHT or Gravity.BOTTOM -> {
-                params.x = parentRect.right - view.width
-                params.y = parentBottom - view.height
+                if (config.forceLandscape) {
+                    params.x = parentRect.bottom - view.width
+                    params.y = parentRect.right - view.height
+                } else {
+                    params.x = parentRect.right - view.width
+                    params.y = parentRect.bottom - view.height
+                }
             }
             // 居中
             Gravity.CENTER -> {
-                params.x = (parentRect.right - view.width).shr(1)
-                params.y = (parentBottom - view.height).shr(1)
+                if (config.forceLandscape) {
+                    params.x = (parentRect.bottom - view.width).shr(1)
+                    params.y = (parentRect.right - view.height).shr(1)
+                } else {
+                    params.x = (parentRect.right - view.width).shr(1)
+                    params.y = (parentRect.bottom - view.height).shr(1)
+                }
             }
             // 上中
-            Gravity.CENTER_HORIZONTAL, Gravity.TOP or Gravity.CENTER_HORIZONTAL ->
-                params.x = (parentRect.right - view.width).shr(1)
+            Gravity.CENTER_HORIZONTAL, Gravity.TOP or Gravity.CENTER_HORIZONTAL -> {
+                if (config.forceLandscape) {
+                    params.x = (parentRect.bottom - view.width).shr(1)
+                } else {
+                    params.x = (parentRect.right - view.width).shr(1)
+                }
+            }
             // 下中
             Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL -> {
-                params.x = (parentRect.right - view.width).shr(1)
-                params.y = parentBottom - view.height
+                if (config.forceLandscape) {
+                    params.x = (parentRect.bottom - view.width).shr(1)
+                    params.y = parentRect.right - view.height
+                } else {
+                    params.x = (parentRect.right - view.width).shr(1)
+                    params.y = parentRect.bottom - view.height
+                }
             }
             // 左中
-            Gravity.CENTER_VERTICAL, Gravity.START or Gravity.CENTER_VERTICAL, Gravity.LEFT or Gravity.CENTER_VERTICAL ->
-                params.y = (parentBottom - view.height).shr(1)
+            Gravity.CENTER_VERTICAL, Gravity.START or Gravity.CENTER_VERTICAL, Gravity.LEFT or Gravity.CENTER_VERTICAL -> {
+                if (config.forceLandscape) {
+                    params.y = (parentRect.right - view.height).shr(1)
+                } else {
+                    params.y = (parentRect.bottom - view.height).shr(1)
+                }
+            }
+
             // 右中
             Gravity.END or Gravity.CENTER_VERTICAL, Gravity.RIGHT or Gravity.CENTER_VERTICAL -> {
-                params.x = parentRect.right - view.width
-                params.y = (parentBottom - view.height).shr(1)
+                if (config.forceLandscape) {
+                    params.x = parentRect.bottom - view.width
+                    params.y = (parentRect.right - view.height).shr(1)
+                } else {
+                    params.x = parentRect.right - view.width
+                    params.y = (parentRect.bottom - view.height).shr(1)
+                }
             }
             // 其他情况，均视为左上
             else -> {
