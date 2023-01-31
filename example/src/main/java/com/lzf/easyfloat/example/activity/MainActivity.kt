@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import com.lzf.easyfloat.EasyFloat
+import com.lzf.easyfloat.anim.DefaultAnimator
 import com.lzf.easyfloat.enums.ShowPattern
 import com.lzf.easyfloat.enums.SidePattern
 import com.lzf.easyfloat.example.R
@@ -105,6 +106,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 //            .setForceLandscape(true)
             .setSidePattern(SidePattern.RESULT_HORIZONTAL)
             .setImmersionStatusBar(true)
+            .setGlobalAnim(false)
             .setGravity(Gravity.END, 0, 0)
             // 传入View，传入布局文件皆可，如：MyCustomView(this)、R.layout.float_custom
             .setLayout(MyCustomView(this)) {

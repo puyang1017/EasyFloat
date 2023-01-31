@@ -36,6 +36,8 @@ data class FloatConfig(
     var immersionStatusBar: Boolean = false,
     //强制横竖屏模式
     var forceLandscape: Boolean = false,
+    // 全局是否正在执行动画
+    var isGlobalAnim: Boolean = true,
 
     // 浮窗的吸附方式（默认不吸附，拖到哪里是哪里）
     var sidePattern: SidePattern = SidePattern.DEFAULT,

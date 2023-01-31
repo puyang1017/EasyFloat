@@ -177,6 +177,13 @@ class EasyFloat {
             apply { config.forceLandscape = forceLandscape }
 
         /**
+         * 设置全局动画
+         * @param isGlobalAnim 是否开启全局动画
+         */
+        fun setGlobalAnim(isGlobalAnim: Boolean) =
+            apply { config.isGlobalAnim = isGlobalAnim }
+
+        /**
          * 设置浮窗的吸附模式
          * @param sidePattern 浮窗吸附模式
          */

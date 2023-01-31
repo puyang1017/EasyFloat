@@ -355,6 +355,10 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
      * 入场动画
      */
     private fun enterAnim(floatingView: View) {
+        if(!config.isGlobalAnim){
+            floatingView.visibility = View.VISIBLE
+            return
+        }
         if (frameLayout == null || config.isAnim) return
         enterAnimator = AnimatorManager(frameLayout!!, params, windowManager, config)
             .enterAnim()?.apply {
@@ -393,6 +397,10 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
      * 退出动画
      */
     fun exitAnim() {
+        if(!config.isGlobalAnim){
+            remove()
+            return
+        }
         if (frameLayout == null || (config.isAnim && enterAnimator == null)) return
         enterAnimator?.cancel()
         val animator: Animator? =
