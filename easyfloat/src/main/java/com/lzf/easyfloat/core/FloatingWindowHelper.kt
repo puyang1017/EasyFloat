@@ -364,6 +364,8 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
                 params.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE
             }
             initEditText()
+            frameLayout?.requestLayout()
+            updateFloat(params.x,params.y)
             return
         }
         if (frameLayout == null || config.isAnim) return

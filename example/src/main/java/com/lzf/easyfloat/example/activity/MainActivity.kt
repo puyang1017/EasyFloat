@@ -103,10 +103,11 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     private fun showActivityFloat(tag: String) {
         EasyFloat.with(this)
             .setShowPattern(ShowPattern.ALL_TIME)
-//            .setForceLandscape(true)
+            .setForceLandscape(true)
             .setSidePattern(SidePattern.RESULT_HORIZONTAL)
             .setImmersionStatusBar(true)
             .setGlobalAnim(false)
+            .setDragEnable(true)
             .setGravity(Gravity.END, 0, 0)
             // 传入View，传入布局文件皆可，如：MyCustomView(this)、R.layout.float_custom
             .setLayout(MyCustomView(this)) {
