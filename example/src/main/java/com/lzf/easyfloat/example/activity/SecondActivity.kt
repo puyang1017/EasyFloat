@@ -48,7 +48,7 @@ class SecondActivity : BaseActivity() {
                 .setSidePattern(SidePattern.TOP)
                 .setDragEnable(false)
                 .setTag(Random.nextDouble().toString())
-                .setAnimator(object : DefaultAnimator() {
+                .setAnimator(object : DefaultAnimator(300) {
                     override fun enterAnim(
                         view: View,
                         params: WindowManager.LayoutParams,
@@ -145,7 +145,7 @@ class SecondActivity : BaseActivity() {
             // 设置宽高是否充满父布局，直接在xml设置match_parent属性无效
             .setMatchParent(widthMatch = false, heightMatch = false)
             // 设置浮窗的出入动画，可自定义，实现相应接口即可（策略模式），无需动画直接设置为null
-            .setAnimator(DefaultAnimator())
+            .setAnimator(DefaultAnimator(300))
             // 设置系统浮窗的不需要显示的页面
             .setFilter(MainActivity::class.java, SecondActivity::class.java)
             // 设置系统浮窗的有效显示高度（不包含虚拟导航栏的高度），基本用不到，除非有虚拟导航栏适配问题

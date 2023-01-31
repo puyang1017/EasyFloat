@@ -70,7 +70,7 @@ data class FloatConfig(
     var floatCallbacks: FloatCallbacks? = null,
 
     // 出入动画
-    var floatAnimator: OnFloatAnimator? = DefaultAnimator(),
+    var floatAnimator: OnFloatAnimator? = DefaultAnimator(300),
 
     // 设置屏幕的有效显示高度（不包含虚拟导航栏的高度），仅针对系统浮窗，一般不用复写
     var displayHeight: OnDisplayHeight = DefaultDisplayHeight(),

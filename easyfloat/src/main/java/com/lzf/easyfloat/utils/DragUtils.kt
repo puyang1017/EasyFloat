@@ -134,7 +134,7 @@ object DragUtils {
         listener: OnTouchRangeListener? = null,
         layoutId: Int = R.layout.default_close_layout,
         showPattern: ShowPattern = ShowPattern.CURRENT_ACTIVITY,
-        appFloatAnimator: OnFloatAnimator? = DefaultAnimator()
+        appFloatAnimator: OnFloatAnimator? = DefaultAnimator(300)
     ) {
         showClose(layoutId, showPattern, appFloatAnimator)
         // 设置触摸状态监听

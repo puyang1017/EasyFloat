@@ -15,7 +15,7 @@ import kotlin.math.min
  * @function: 系统浮窗的默认效果，选择靠近左右侧的一边进行出入
  * @date: 2019-07-22  17:22
  */
-open class DefaultAnimator : OnFloatAnimator {
+open class DefaultAnimator(val mDuration:Long) : OnFloatAnimator {
 
     override fun enterAnim(
         view: View,
@@ -43,6 +43,7 @@ open class DefaultAnimator : OnFloatAnimator {
         val start = if (isExit) triple.second else triple.first
         val end = if (isExit) triple.first else triple.second
         return ValueAnimator.ofInt(start, end).apply {
+            duration = mDuration
             addUpdateListener {
                 try {
                     val value = it.animatedValue as Int
