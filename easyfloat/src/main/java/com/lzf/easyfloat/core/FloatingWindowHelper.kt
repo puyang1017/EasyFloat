@@ -111,7 +111,20 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         // 为了避免创建的时候闪一下，我们先隐藏视图，不能直接设置GONE，否则定位会出现问题
         floatingView.visibility = View.INVISIBLE
         // 将frameLayout添加到系统windowManager中
-        windowManager.addView(frameLayout, params)
+//        windowManager.addView(frameLayout, params)
+        FloatingWindowManager.windowMap.let {map->
+            val bufferViews= mutableListOf<FloatingWindowHelper>()
+            for (key in map.toMap().entries) {
+                if( key.value.config.level > config.level){
+                    key.value.removeView()
+                    bufferViews.add(key.value)
+                }
+            }
+            windowManager.addView(frameLayout, params)
+            bufferViews.forEach {
+                it.showView()
+            }
+        }
 
         // 通过重写frameLayout的Touch事件，实现拖拽效果
         frameLayout?.touchListener = object : OnFloatTouchListener {
@@ -440,6 +453,20 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         FloatingWindowManager.remove(config.floatTag)
         // removeView是异步删除，在Activity销毁的时候会导致窗口泄漏，所以使用removeViewImmediate直接删除view
         windowManager.run { if (force) removeViewImmediate(frameLayout) else removeView(frameLayout) }
+    } catch (e: Exception) {
+        Logger.e("浮窗关闭出现异常：$e")
+    }
+
+    fun removeView() = try {
+        config.isAnim = false
+        // removeView是异步删除，在Activity销毁的时候会导致窗口泄漏，所以使用removeViewImmediate直接删除view
+        windowManager.run { removeView(frameLayout) }
+    } catch (e: Exception) {
+        Logger.e("浮窗关闭出现异常：$e")
+    }
+
+    fun showView() = try {
+        windowManager.run { addView(frameLayout, params) }
     } catch (e: Exception) {
         Logger.e("浮窗关闭出现异常：$e")
     }

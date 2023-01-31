@@ -38,7 +38,8 @@ data class FloatConfig(
     var forceLandscape: Boolean = false,
     // 全局是否正在执行动画
     var isGlobalAnim: Boolean = true,
-
+    // 层级 数字越大层级越高
+    var level: Int = 0,
     // 浮窗的吸附方式（默认不吸附，拖到哪里是哪里）
     var sidePattern: SidePattern = SidePattern.DEFAULT,
 

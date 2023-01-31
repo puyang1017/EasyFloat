@@ -184,6 +184,13 @@ class EasyFloat {
             apply { config.isGlobalAnim = isGlobalAnim }
 
         /**
+         * 层级
+         * @param level 数字越大层级越高
+         */
+        fun setLevel(level: Int) =
+            apply { config.level = level }
+
+        /**
          * 设置浮窗的吸附模式
          * @param sidePattern 浮窗吸附模式
          */
