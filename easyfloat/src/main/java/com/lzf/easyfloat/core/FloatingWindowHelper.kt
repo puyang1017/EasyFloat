@@ -357,6 +357,13 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
     private fun enterAnim(floatingView: View) {
         if(!config.isGlobalAnim){
             floatingView.visibility = View.VISIBLE
+            params.flags =
+                FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE or FLAG_LAYOUT_NO_LIMITS
+            if (!config.immersionStatusBar) {
+                // 不需要延伸到屏幕外了，防止屏幕旋转的时候，浮窗处于屏幕外
+                params.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE
+            }
+            initEditText()
             return
         }
         if (frameLayout == null || config.isAnim) return
