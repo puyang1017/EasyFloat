@@ -250,7 +250,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         when (config.gravity) {
             // 右上
             Gravity.END, Gravity.END or Gravity.TOP, Gravity.RIGHT, Gravity.RIGHT or Gravity.TOP -> {
-                if (config.forceLandscape) {
+                if (DisplayUtils.isLandscape(context)) {
                     params.x = parentRect.bottom - view.width
                 } else {
                     params.x = parentRect.right - view.width
@@ -258,7 +258,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             }
             // 左下
             Gravity.START or Gravity.BOTTOM, Gravity.BOTTOM, Gravity.LEFT or Gravity.BOTTOM -> {
-                if (config.forceLandscape) {
+                if (DisplayUtils.isLandscape(context)) {
                     params.y = parentRect.right - view.height
                 } else {
                     params.y = parentRect.bottom - view.height
@@ -267,7 +267,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
 
             // 右下
             Gravity.END or Gravity.BOTTOM, Gravity.RIGHT or Gravity.BOTTOM -> {
-                if (config.forceLandscape) {
+                if (DisplayUtils.isLandscape(context)) {
                     params.x = parentRect.bottom - view.width
                     params.y = parentRect.right - view.height
                 } else {
@@ -277,7 +277,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             }
             // 居中
             Gravity.CENTER -> {
-                if (config.forceLandscape) {
+                if (DisplayUtils.isLandscape(context)) {
                     params.x = (parentRect.bottom - view.width).shr(1)
                     params.y = (parentRect.right - view.height).shr(1)
                 } else {
@@ -287,7 +287,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             }
             // 上中
             Gravity.CENTER_HORIZONTAL, Gravity.TOP or Gravity.CENTER_HORIZONTAL -> {
-                if (config.forceLandscape) {
+                if (DisplayUtils.isLandscape(context)) {
                     params.x = (parentRect.bottom - view.width).shr(1)
                 } else {
                     params.x = (parentRect.right - view.width).shr(1)
@@ -295,7 +295,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             }
             // 下中
             Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL -> {
-                if (config.forceLandscape) {
+                if (DisplayUtils.isLandscape(context)) {
                     params.x = (parentRect.bottom - view.width).shr(1)
                     params.y = parentRect.right - view.height
                 } else {
@@ -305,7 +305,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             }
             // 左中
             Gravity.CENTER_VERTICAL, Gravity.START or Gravity.CENTER_VERTICAL, Gravity.LEFT or Gravity.CENTER_VERTICAL -> {
-                if (config.forceLandscape) {
+                if (DisplayUtils.isLandscape(context)) {
                     params.y = (parentRect.right - view.height).shr(1)
                 } else {
                     params.y = (parentRect.bottom - view.height).shr(1)
@@ -314,7 +314,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
 
             // 右中
             Gravity.END or Gravity.CENTER_VERTICAL, Gravity.RIGHT or Gravity.CENTER_VERTICAL -> {
-                if (config.forceLandscape) {
+                if (DisplayUtils.isLandscape(context)) {
                     params.x = parentRect.bottom - view.width
                     params.y = (parentRect.right - view.height).shr(1)
                 } else {

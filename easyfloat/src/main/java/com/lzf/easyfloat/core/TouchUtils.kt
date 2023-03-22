@@ -204,7 +204,7 @@ internal class TouchUtils(val context: Context, val config: FloatConfig) {
     private fun initBoarderValue(view: View, params: LayoutParams) {
         // 屏幕宽高需要每次获取，可能会有屏幕旋转、虚拟导航栏的状态变化
         if (Build.VERSION.SDK_INT >= 31) {
-            if (config.forceLandscape) {
+            if (DisplayUtils.isLandscape(context)) {
                 parentHeight = DisplayUtils.getScreenWidth(context)
                 parentWidth = config.displayHeight.getDisplayRealHeight(context)
             } else {

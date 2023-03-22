@@ -175,4 +175,7 @@ object DisplayUtils {
         return realWidth - displayWidth > 0 || realHeight - displayHeight > 0
     }
 
+    fun isLandscape(context: Context): Boolean {
+        return (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+    }
 }

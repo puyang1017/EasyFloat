@@ -34,8 +34,6 @@ data class FloatConfig(
     var hasEditText: Boolean = false,
     // 状态栏沉浸
     var immersionStatusBar: Boolean = false,
-    //强制横竖屏模式
-    var forceLandscape: Boolean = false,
     // 全局是否正在执行动画
     var isGlobalAnim: Boolean = true,
     // 层级 数字越大层级越高
