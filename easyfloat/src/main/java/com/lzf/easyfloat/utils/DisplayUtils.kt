@@ -1,5 +1,6 @@
 package com.lzf.easyfloat.utils
 
+import android.app.Activity
 import android.app.Service
 import android.content.Context
 import android.content.res.Configuration
@@ -176,6 +177,6 @@ object DisplayUtils {
     }
 
     fun isLandscape(context: Context): Boolean {
-        return (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+        return ((context as Activity).application.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
     }
 }
