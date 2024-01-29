@@ -8,7 +8,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import com.lzf.easyfloat.EasyFloat
-import com.lzf.easyfloat.anim.DefaultAnimator
 import com.lzf.easyfloat.enums.ShowPattern
 import com.lzf.easyfloat.enums.SidePattern
 import com.lzf.easyfloat.example.R
@@ -308,7 +307,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     private fun showAppFloat2(tag: String) {
         EasyFloat.with(this.applicationContext)
             .setTag(tag)
-            .setShowPattern(ShowPattern.FOREGROUND)
+            .setShowPattern(ShowPattern.ALL_TIME)
             .setLocation(100, 100)
             .setAnimator(null)
             .setFilter(SecondActivity::class.java)
