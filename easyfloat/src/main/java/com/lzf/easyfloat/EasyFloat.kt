@@ -96,8 +96,8 @@ class EasyFloat {
          */
         @JvmStatic
         @JvmOverloads
-        fun updateFloat(tag: String? = null, x: Int = -1, y: Int = -1) =
-            FloatingWindowManager.getHelper(tag)?.updateFloat(x, y)
+        fun updateFloat(tag: String? = null, x: Int = -1, y: Int = -1, width: Int = -1, height: Int = -1) =
+            FloatingWindowManager.getHelper(tag)?.updateFloat(x, y, width, height)
 
         // 以下几个方法为：系统浮窗过滤页面的添加、移除、清空
         /**

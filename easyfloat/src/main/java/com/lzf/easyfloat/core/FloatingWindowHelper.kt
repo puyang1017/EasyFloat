@@ -474,14 +474,16 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
     /**
      * 更新浮窗坐标
      */
-    fun updateFloat(x: Int, y: Int) {
+    fun updateFloat(x: Int, y: Int, width: Int = -1, height: Int = -1) {
         frameLayout?.let {
-            if (x == -1 && y == -1) {
+            if (x == -1 && y == -1 && width == -1 && height == -1) {
                 // 未指定具体坐标，执行吸附动画
                 it.postDelayed({ touchUtils.updateFloat(it, params, windowManager) }, 200)
             } else {
-                params.x = x
-                params.y = y
+                if (x != -1) params.x = x
+                if (y != -1) params.y = y
+                if (width != -1) params.width = width
+                if (height != -1) params.height = height
                 windowManager.updateViewLayout(it, params)
             }
         }

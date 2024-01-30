@@ -320,6 +320,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                             params.width = max(params.width + x.toInt(), 200)
                             params.height = max(params.height + y.toInt(), 200)
                             content.layoutParams = params
+                            EasyFloat.updateFloat(tag, -1, -1, params.width, params.height)
                         }
                     }
 
