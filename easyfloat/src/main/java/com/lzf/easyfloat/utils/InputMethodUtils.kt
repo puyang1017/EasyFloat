@@ -34,6 +34,12 @@ object InputMethodUtils {
         FloatingWindowManager.getHelper(tag)?.apply {
             // 更改flags，并刷新布局，让系统浮窗获取焦点
             params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+            if (config.isNotTouchable) {
+                params.flags = params.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            }
+            if (config.immersionStatusBar) {
+                params.flags = params.flags or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            }
             windowManager.updateViewLayout(frameLayout, params)
         }
 
@@ -52,8 +58,13 @@ object InputMethodUtils {
     @JvmOverloads
     fun closedInputMethod(tag: String? = null) =
         FloatingWindowManager.getHelper(tag)?.run {
-            params.flags =
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            if (config.isNotTouchable) {
+                params.flags = params.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            }
+            if (config.immersionStatusBar) {
+                params.flags = params.flags or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            }
             windowManager.updateViewLayout(frameLayout, params)
         }
 

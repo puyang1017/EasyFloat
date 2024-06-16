@@ -73,18 +73,13 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             format = PixelFormat.RGBA_8888
             gravity = Gravity.START or Gravity.TOP
 
-            flags = if (config.isNotTouchable) {// 设置浮窗以外的触摸事件可以传递给后面的窗口、不自动获取焦点
-                if (config.immersionStatusBar) {// 没有边界限制，允许窗口扩展到屏幕外
-                    FLAG_NOT_TOUCHABLE or FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCH_MODAL or FLAG_LAYOUT_NO_LIMITS
-                } else {
-                    FLAG_NOT_TOUCHABLE or FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCH_MODAL
-                }
-            } else {// 设置浮窗内外的触摸事件都可以传递给后面的窗口、不自动获取焦点
-                if (config.immersionStatusBar) {// 没有边界限制，允许窗口扩展到屏幕外
-                    FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCH_MODAL or FLAG_LAYOUT_NO_LIMITS
-                } else {
-                    FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCH_MODAL
-                }
+            // 设置浮窗以外的触摸事件可以传递给后面的窗口、不自动获取焦点
+            flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE
+            if (config.isNotTouchable) {// 设置浮窗内外的触摸事件都可以传递给后面的窗口
+                flags = flags or FLAG_NOT_TOUCHABLE
+            }
+            if (config.immersionStatusBar) {// 没有边界限制，允许窗口扩展到屏幕外
+                flags = flags or FLAG_LAYOUT_NO_LIMITS
             }
 
             width = if (config.widthMatch) MATCH_PARENT else WRAP_CONTENT
@@ -380,11 +375,12 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
     private fun enterAnim(floatingView: View) {
         if(!config.isGlobalAnim){
             floatingView.visibility = View.VISIBLE
-            params.flags =
-                FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE or FLAG_LAYOUT_NO_LIMITS
-            if (!config.immersionStatusBar) {
-                // 不需要延伸到屏幕外了，防止屏幕旋转的时候，浮窗处于屏幕外
-                params.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE
+            params.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE
+            if (config.isNotTouchable) {
+                params.flags = params.flags or FLAG_NOT_TOUCHABLE
+            }
+            if (config.immersionStatusBar) {
+                params.flags = params.flags or FLAG_LAYOUT_NO_LIMITS
             }
             initEditText()
             frameLayout?.requestLayout()
@@ -395,8 +391,10 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         enterAnimator = AnimatorManager(frameLayout!!, params, windowManager, config)
             .enterAnim()?.apply {
                 // 可以延伸到屏幕外，动画结束按需去除该属性，不然旋转屏幕可能置于屏幕外部
-                params.flags =
-                    FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE or FLAG_LAYOUT_NO_LIMITS
+                params.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE or FLAG_LAYOUT_NO_LIMITS
+                if (config.isNotTouchable) {
+                    params.flags = params.flags or FLAG_NOT_TOUCHABLE
+                }
 
                 addListener(object : Animator.AnimatorListener {
                     override fun onAnimationRepeat(animation: Animator?) {}
@@ -406,6 +404,9 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
                         if (!config.immersionStatusBar) {
                             // 不需要延伸到屏幕外了，防止屏幕旋转的时候，浮窗处于屏幕外
                             params.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE
+                            if (config.isNotTouchable) {
+                                params.flags = params.flags or FLAG_NOT_TOUCHABLE
+                            }
                         }
                         initEditText()
                     }

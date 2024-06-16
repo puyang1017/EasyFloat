@@ -310,6 +310,8 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             .setShowPattern(ShowPattern.ALL_TIME)
             .setLocation(100, 100)
             .setAnimator(null)
+            .setGlobalAnim(false)
+            .setNotTouchable(true)
             .setFilter(SecondActivity::class.java)
             .setLayout(R.layout.float_app_scale) {
                 val content = it.findViewById<RelativeLayout>(R.id.rlContent)
