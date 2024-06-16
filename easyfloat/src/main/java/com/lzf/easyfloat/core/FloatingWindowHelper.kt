@@ -72,11 +72,21 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             }
             format = PixelFormat.RGBA_8888
             gravity = Gravity.START or Gravity.TOP
-            // 设置浮窗以外的触摸事件可以传递给后面的窗口、不自动获取焦点
-            flags = if (config.immersionStatusBar)
-            // 没有边界限制，允许窗口扩展到屏幕外
-                FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE or FLAG_LAYOUT_NO_LIMITS
-            else FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE
+
+            flags = if (config.isNotTouchable) {// 设置浮窗以外的触摸事件可以传递给后面的窗口、不自动获取焦点
+                if (config.immersionStatusBar) {// 没有边界限制，允许窗口扩展到屏幕外
+                    FLAG_NOT_TOUCHABLE or FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCH_MODAL or FLAG_LAYOUT_NO_LIMITS
+                } else {
+                    FLAG_NOT_TOUCHABLE or FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCH_MODAL
+                }
+            } else {// 设置浮窗内外的触摸事件都可以传递给后面的窗口、不自动获取焦点
+                if (config.immersionStatusBar) {// 没有边界限制，允许窗口扩展到屏幕外
+                    FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCH_MODAL or FLAG_LAYOUT_NO_LIMITS
+                } else {
+                    FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCH_MODAL
+                }
+            }
+
             width = if (config.widthMatch) MATCH_PARENT else WRAP_CONTENT
             height = if (config.heightMatch) MATCH_PARENT else WRAP_CONTENT
 

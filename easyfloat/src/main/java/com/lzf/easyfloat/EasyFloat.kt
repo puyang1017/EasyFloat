@@ -72,6 +72,17 @@ class EasyFloat {
             getConfig(tag)?.let { it.dragEnable = dragEnable }
 
         /**
+         * 设置当前浮窗是否不可触摸，先获取浮窗的config，后修改相应属性
+         * @param isNotTouchable 是否不可触摸
+         * @param tag 浮窗标签
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun isNotTouchable(isNotTouchable: Boolean, tag: String? = null) =
+            getConfig(tag)?.let { it.isNotTouchable = isNotTouchable }
+
+
+        /**
          * 获取当前浮窗是否显示，通过浮窗的config，获取显示状态
          * @param tag 浮窗标签
          * @return 当前浮窗是否显示
@@ -279,6 +290,12 @@ class EasyFloat {
          * @param dragEnable 是否可拖拽
          */
         fun setDragEnable(dragEnable: Boolean) = apply { config.dragEnable = dragEnable }
+
+        /**
+         * 设置浮窗是否可拖拽
+         * @param isNotTouchable 是否可拖拽
+         */
+        fun setNotTouchable(isNotTouchable: Boolean) = apply { config.isNotTouchable = isNotTouchable }
 
         /**
          * 设置浮窗是否状态栏沉浸

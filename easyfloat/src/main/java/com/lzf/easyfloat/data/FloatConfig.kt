@@ -24,6 +24,8 @@ data class FloatConfig(
 
     // 是否可拖拽
     var dragEnable: Boolean = true,
+    // 是否不需要触摸事件（点击触摸悬浮窗内可传递到下面应用）
+    var isNotTouchable: Boolean = false,
     // 是否正在被拖拽
     var isDrag: Boolean = false,
     // 是否正在执行动画
