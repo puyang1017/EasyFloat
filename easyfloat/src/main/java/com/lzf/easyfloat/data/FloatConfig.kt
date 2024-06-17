@@ -26,6 +26,8 @@ data class FloatConfig(
     var dragEnable: Boolean = true,
     // 是否不需要触摸事件（点击触摸悬浮窗内可传递到下面应用）
     var isNotTouchable: Boolean = false,
+    // 当前浮窗不透明度(取值范围0.0-1.0。部分设备（如华为鸿蒙机型），需要设置透明度在0.8f及以下，否则触摸事件无法穿透到下层)
+    var alpha: Float = 1.0f,
     // 是否正在被拖拽
     var isDrag: Boolean = false,
     // 是否正在执行动画

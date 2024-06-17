@@ -81,6 +81,15 @@ class EasyFloat {
         fun isNotTouchable(isNotTouchable: Boolean, tag: String? = null) =
             getConfig(tag)?.let { it.isNotTouchable = isNotTouchable }
 
+        /**
+         * 设置当前浮窗不透明度，先获取浮窗的config，后修改相应属性
+         * @param alpha 不透明度（0.0-1.0）
+         * @param tag 浮窗标签
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun setAlpha(alpha: Float, tag: String? = null) =
+            getConfig(tag)?.let { it.alpha = alpha }
 
         /**
          * 获取当前浮窗是否显示，通过浮窗的config，获取显示状态
@@ -292,10 +301,16 @@ class EasyFloat {
         fun setDragEnable(dragEnable: Boolean) = apply { config.dragEnable = dragEnable }
 
         /**
-         * 设置浮窗是否可拖拽
+         * 设置浮窗不可触摸
          * @param isNotTouchable 是否可拖拽
          */
         fun setNotTouchable(isNotTouchable: Boolean) = apply { config.isNotTouchable = isNotTouchable }
+
+        /**
+         * 设置浮窗不透明度
+         * @param alpha 不透明度（0.0-1.0）
+         */
+        fun setAlpha(alpha: Float) = apply { config.alpha = alpha }
 
         /**
          * 设置浮窗是否状态栏沉浸

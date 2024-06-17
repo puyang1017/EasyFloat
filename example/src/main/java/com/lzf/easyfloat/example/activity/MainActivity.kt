@@ -312,6 +312,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             .setAnimator(null)
             .setGlobalAnim(false)
             .setNotTouchable(true)
+            .setAlpha(0.5f)
             .setFilter(SecondActivity::class.java)
             .setLayout(R.layout.float_app_scale) {
                 val content = it.findViewById<RelativeLayout>(R.id.rlContent)

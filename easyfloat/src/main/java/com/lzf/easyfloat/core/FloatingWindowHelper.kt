@@ -89,6 +89,9 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
                 height = DisplayUtils.getScreenHeight(context)
             }
 
+            //设置浮窗的不透明度
+            alpha = config.alpha
+
             // 如若设置了固定坐标，直接定位
             if (config.locationPair != Pair(0, 0)) {
                 x = config.locationPair.first
