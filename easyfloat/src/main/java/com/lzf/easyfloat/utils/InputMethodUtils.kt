@@ -32,15 +32,16 @@ object InputMethodUtils {
     @JvmOverloads
     fun openInputMethod(editText: EditText, tag: String? = null) {
         FloatingWindowManager.getHelper(tag)?.apply {
+            if (windowManager == null || params == null) return
             // 更改flags，并刷新布局，让系统浮窗获取焦点
-            params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+            params!!.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
             if (config.isNotTouchable) {
-                params.flags = params.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                params!!.flags = params!!.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             }
             if (config.immersionStatusBar) {
-                params.flags = params.flags or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                params!!.flags = params!!.flags or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
             }
-            windowManager.updateViewLayout(frameLayout, params)
+            windowManager!!.updateViewLayout(frameLayout, params)
         }
 
         Handler(Looper.getMainLooper()).postDelayed({
@@ -58,14 +59,15 @@ object InputMethodUtils {
     @JvmOverloads
     fun closedInputMethod(tag: String? = null) =
         FloatingWindowManager.getHelper(tag)?.run {
-            params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            if (windowManager == null || params == null) return@run
+            params!!.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
             if (config.isNotTouchable) {
-                params.flags = params.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                params!!.flags = params!!.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             }
             if (config.immersionStatusBar) {
-                params.flags = params.flags or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                params!!.flags = params!!.flags or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
             }
-            windowManager.updateViewLayout(frameLayout, params)
+            windowManager!!.updateViewLayout(frameLayout, params)
         }
 
 }

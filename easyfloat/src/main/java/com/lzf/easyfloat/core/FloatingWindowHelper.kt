@@ -9,8 +9,21 @@ import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
 import android.os.IBinder
-import android.view.*
-import android.view.WindowManager.LayoutParams.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+import android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+import android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+import android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+import android.view.WindowManager.LayoutParams.MATCH_PARENT
+import android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+import android.view.WindowManager.LayoutParams.TYPE_APPLICATION_PANEL
+import android.view.WindowManager.LayoutParams.TYPE_PHONE
+import android.view.WindowManager.LayoutParams.WRAP_CONTENT
 import android.widget.EditText
 import com.lzf.easyfloat.anim.AnimatorManager
 import com.lzf.easyfloat.data.FloatConfig
@@ -29,8 +42,8 @@ import com.lzf.easyfloat.widget.ParentFrameLayout
  */
 internal class FloatingWindowHelper(val context: Context, var config: FloatConfig) {
 
-    lateinit var windowManager: WindowManager
-    lateinit var params: WindowManager.LayoutParams
+    var windowManager: WindowManager? = null
+    var params: WindowManager.LayoutParams? = null
     var frameLayout: ParentFrameLayout? = null
     private lateinit var touchUtils: TouchUtils
     private var enterAnimator: Animator? = null
@@ -110,6 +123,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
      * 重写自定义布局的touch事件，实现拖拽效果。
      */
     private fun addView() {
+        if (windowManager == null || params == null) return
         // 创建一个frameLayout作为浮窗布局的父容器
         frameLayout = ParentFrameLayout(context, config)
         frameLayout?.tag = config.floatTag
@@ -120,15 +134,15 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         floatingView.visibility = View.INVISIBLE
         // 将frameLayout添加到系统windowManager中
 //        windowManager.addView(frameLayout, params)
-        FloatingWindowManager.windowMap.let {map->
-            val bufferViews= mutableListOf<FloatingWindowHelper>()
+        FloatingWindowManager.windowMap.let { map ->
+            val bufferViews = mutableListOf<FloatingWindowHelper>()
             for (key in map.toMap().entries) {
-                if( key.value.config.level > config.level){
+                if (key.value.config.level > config.level) {
                     key.value.removeView()
                     bufferViews.add(key.value)
                 }
             }
-            windowManager.addView(frameLayout, params)
+            windowManager!!.addView(frameLayout, params)
             bufferViews.forEach {
                 it.showView()
             }
@@ -137,7 +151,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         // 通过重写frameLayout的Touch事件，实现拖拽效果
         frameLayout?.touchListener = object : OnFloatTouchListener {
             override fun onTouch(event: MotionEvent) =
-                touchUtils.updateFloat(frameLayout!!, event, windowManager, params)
+                touchUtils.updateFloat(frameLayout!!, event, windowManager!!, params!!)
         }
 
         // 在浮窗绘制完成的时候，设置初始坐标、执行入场动画
@@ -175,6 +189,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         frameLayout?.apply {
             // 监听frameLayout布局完成
             viewTreeObserver?.addOnGlobalLayoutListener {
+                if (windowManager == null || params == null) return@addOnGlobalLayoutListener
                 val filterInvalidVal = lastLayoutMeasureWidth == -1 || lastLayoutMeasureHeight == -1
                 val filterEqualVal =
                     lastLayoutMeasureWidth == this.measuredWidth && lastLayoutMeasureHeight == this.measuredHeight
@@ -188,13 +203,13 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
 
                 } else if (config.layoutChangedGravity.and(Gravity.END) == Gravity.END) {
                     val diffChangedSize = this.measuredWidth - lastLayoutMeasureWidth
-                    params.x = params.x - diffChangedSize
+                    params!!.x -= diffChangedSize
 
                 } else if (config.layoutChangedGravity.and(Gravity.CENTER_HORIZONTAL) == Gravity.CENTER_HORIZONTAL
                     || config.layoutChangedGravity.and(Gravity.CENTER) == Gravity.CENTER
                 ) {
                     val diffChangedCenter = lastLayoutMeasureWidth / 2 - this.measuredWidth / 2
-                    params.x += diffChangedCenter
+                    params!!.x += diffChangedCenter
                 }
 
                 // 垂直方向
@@ -203,20 +218,20 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
 
                 } else if (config.layoutChangedGravity.and(Gravity.BOTTOM) == Gravity.BOTTOM) {
                     val diffChangedSize = this.measuredHeight - lastLayoutMeasureHeight
-                    params.y = params.y - diffChangedSize
+                    params!!.y -= diffChangedSize
 
                 } else if (config.layoutChangedGravity.and(Gravity.CENTER_VERTICAL) == Gravity.CENTER_VERTICAL
                     || config.layoutChangedGravity.and(Gravity.CENTER) == Gravity.CENTER
                 ) {
                     val diffChangedCenter = lastLayoutMeasureHeight / 2 - this.measuredHeight / 2
-                    params.y += diffChangedCenter
+                    params!!.y += diffChangedCenter
                 }
 
                 lastLayoutMeasureWidth = this.measuredWidth
                 lastLayoutMeasureHeight = this.measuredHeight
 
                 // 更新浮窗位置信息
-                windowManager.updateViewLayout(frameLayout, params)
+                windowManager!!.updateViewLayout(frameLayout, params)
             }
         }
     }
@@ -246,88 +261,89 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
      */
     @SuppressLint("RtlHardcoded")
     private fun setGravity(view: View?) {
+        if (windowManager == null || params == null) return
         if (config.locationPair != Pair(0, 0) || view == null) return
         val parentRect = Rect()
         // 获取浮窗所在的矩形
-        windowManager.defaultDisplay.getRectSize(parentRect)
+        windowManager!!.defaultDisplay.getRectSize(parentRect)
         val location = IntArray(2)
         // 获取在整个屏幕内的绝对坐标
         view.getLocationOnScreen(location)
         // 通过绝对高度和相对高度比较，判断包含顶部状态栏
-        val statusBarHeight = if (location[1] > params.y) DisplayUtils.statusBarHeight(view) else 0
+        val statusBarHeight = if (location[1] > params!!.y) DisplayUtils.statusBarHeight(view) else 0
         when (config.gravity) {
             // 右上
             Gravity.END, Gravity.END or Gravity.TOP, Gravity.RIGHT, Gravity.RIGHT or Gravity.TOP -> {
                 if (DisplayUtils.isLandscape(context)) {
-                    params.x = parentRect.bottom - view.width
+                    params!!.x = parentRect.bottom - view.width
                 } else {
-                    params.x = parentRect.right - view.width
+                    params!!.x = parentRect.right - view.width
                 }
             }
             // 左下
             Gravity.START or Gravity.BOTTOM, Gravity.BOTTOM, Gravity.LEFT or Gravity.BOTTOM -> {
                 if (DisplayUtils.isLandscape(context)) {
-                    params.y = parentRect.right - view.height
+                    params!!.y = parentRect.right - view.height
                 } else {
-                    params.y = parentRect.bottom - view.height
+                    params!!.y = parentRect.bottom - view.height
                 }
             }
 
             // 右下
             Gravity.END or Gravity.BOTTOM, Gravity.RIGHT or Gravity.BOTTOM -> {
                 if (DisplayUtils.isLandscape(context)) {
-                    params.x = parentRect.bottom - view.width
-                    params.y = parentRect.right - view.height
+                    params!!.x = parentRect.bottom - view.width
+                    params!!.y = parentRect.right - view.height
                 } else {
-                    params.x = parentRect.right - view.width
-                    params.y = parentRect.bottom - view.height
+                    params!!.x = parentRect.right - view.width
+                    params!!.y = parentRect.bottom - view.height
                 }
             }
             // 居中
             Gravity.CENTER -> {
                 if (DisplayUtils.isLandscape(context)) {
-                    params.x = (parentRect.bottom - view.width).shr(1)
-                    params.y = (parentRect.right - view.height).shr(1)
+                    params!!.x = (parentRect.bottom - view.width).shr(1)
+                    params!!.y = (parentRect.right - view.height).shr(1)
                 } else {
-                    params.x = (parentRect.right - view.width).shr(1)
-                    params.y = (parentRect.bottom - view.height).shr(1)
+                    params!!.x = (parentRect.right - view.width).shr(1)
+                    params!!.y = (parentRect.bottom - view.height).shr(1)
                 }
             }
             // 上中
             Gravity.CENTER_HORIZONTAL, Gravity.TOP or Gravity.CENTER_HORIZONTAL -> {
                 if (DisplayUtils.isLandscape(context)) {
-                    params.x = (parentRect.bottom - view.width).shr(1)
+                    params!!.x = (parentRect.bottom - view.width).shr(1)
                 } else {
-                    params.x = (parentRect.right - view.width).shr(1)
+                    params!!.x = (parentRect.right - view.width).shr(1)
                 }
             }
             // 下中
             Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL -> {
                 if (DisplayUtils.isLandscape(context)) {
-                    params.x = (parentRect.bottom - view.width).shr(1)
-                    params.y = parentRect.right - view.height
+                    params!!.x = (parentRect.bottom - view.width).shr(1)
+                    params!!.y = parentRect.right - view.height
                 } else {
-                    params.x = (parentRect.right - view.width).shr(1)
-                    params.y = parentRect.bottom - view.height
+                    params!!.x = (parentRect.right - view.width).shr(1)
+                    params!!.y = parentRect.bottom - view.height
                 }
             }
             // 左中
             Gravity.CENTER_VERTICAL, Gravity.START or Gravity.CENTER_VERTICAL, Gravity.LEFT or Gravity.CENTER_VERTICAL -> {
                 if (DisplayUtils.isLandscape(context)) {
-                    params.y = (parentRect.right - view.height).shr(1)
+                    params!!.y = (parentRect.right - view.height).shr(1)
                 } else {
-                    params.y = (parentRect.bottom - view.height).shr(1)
+                    params!!.y = (parentRect.bottom - view.height).shr(1)
                 }
             }
 
             // 右中
             Gravity.END or Gravity.CENTER_VERTICAL, Gravity.RIGHT or Gravity.CENTER_VERTICAL -> {
                 if (DisplayUtils.isLandscape(context)) {
-                    params.x = parentRect.bottom - view.width
-                    params.y = (parentRect.right - view.height).shr(1)
+                    params!!.x = parentRect.bottom - view.width
+                    params!!.y = (parentRect.right - view.height).shr(1)
                 } else {
-                    params.x = parentRect.right - view.width
-                    params.y = (parentRect.bottom - view.height).shr(1)
+                    params!!.x = parentRect.right - view.width
+                    params!!.y = (parentRect.bottom - view.height).shr(1)
                 }
             }
             // 其他情况，均视为左上
@@ -336,20 +352,20 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
         }
 
         // 设置偏移量
-        params.x += config.offsetPair.first
-        params.y += config.offsetPair.second
+        params!!.x += config.offsetPair.first
+        params!!.y += config.offsetPair.second
 
         if (config.immersionStatusBar) {
             if (config.showPattern != ShowPattern.CURRENT_ACTIVITY) {
-                params.y -= statusBarHeight
+                params!!.y -= statusBarHeight
             }
         } else {
             if (config.showPattern == ShowPattern.CURRENT_ACTIVITY) {
-                params.y += statusBarHeight
+                params!!.y += statusBarHeight
             }
         }
         // 更新浮窗位置信息
-        windowManager.updateViewLayout(view, params)
+        windowManager!!.updateViewLayout(view, params)
     }
 
     /**
@@ -376,27 +392,28 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
      * 入场动画
      */
     private fun enterAnim(floatingView: View) {
-        if(!config.isGlobalAnim){
+        if (windowManager == null || params == null) return
+        if (!config.isGlobalAnim) {
             floatingView.visibility = View.VISIBLE
-            params.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE
+            params!!.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE
             if (config.isNotTouchable) {
-                params.flags = params.flags or FLAG_NOT_TOUCHABLE
+                params!!.flags = params!!.flags or FLAG_NOT_TOUCHABLE
             }
             if (config.immersionStatusBar) {
-                params.flags = params.flags or FLAG_LAYOUT_NO_LIMITS
+                params!!.flags = params!!.flags or FLAG_LAYOUT_NO_LIMITS
             }
             initEditText()
             frameLayout?.requestLayout()
-            updateFloat(params.x,params.y)
+            updateFloat(params!!.x, params!!.y)
             return
         }
         if (frameLayout == null || config.isAnim) return
-        enterAnimator = AnimatorManager(frameLayout!!, params, windowManager, config)
+        enterAnimator = AnimatorManager(frameLayout!!, params!!, windowManager!!, config)
             .enterAnim()?.apply {
                 // 可以延伸到屏幕外，动画结束按需去除该属性，不然旋转屏幕可能置于屏幕外部
-                params.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE or FLAG_LAYOUT_NO_LIMITS
+                params!!.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE or FLAG_LAYOUT_NO_LIMITS
                 if (config.isNotTouchable) {
-                    params.flags = params.flags or FLAG_NOT_TOUCHABLE
+                    params!!.flags = params!!.flags or FLAG_NOT_TOUCHABLE
                 }
 
                 addListener(object : Animator.AnimatorListener {
@@ -406,9 +423,9 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
                         config.isAnim = false
                         if (!config.immersionStatusBar) {
                             // 不需要延伸到屏幕外了，防止屏幕旋转的时候，浮窗处于屏幕外
-                            params.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE
+                            params!!.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE
                             if (config.isNotTouchable) {
-                                params.flags = params.flags or FLAG_NOT_TOUCHABLE
+                                params!!.flags = params!!.flags or FLAG_NOT_TOUCHABLE
                             }
                         }
                         initEditText()
@@ -425,7 +442,7 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
             }
         if (enterAnimator == null) {
             floatingView.visibility = View.VISIBLE
-            windowManager.updateViewLayout(floatingView, params)
+            windowManager!!.updateViewLayout(floatingView, params)
         }
     }
 
@@ -433,19 +450,20 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
      * 退出动画
      */
     fun exitAnim() {
-        if(!config.isGlobalAnim){
+        if (windowManager == null || params == null) return
+        if (!config.isGlobalAnim) {
             remove()
             return
         }
         if (frameLayout == null || (config.isAnim && enterAnimator == null)) return
         enterAnimator?.cancel()
         val animator: Animator? =
-            AnimatorManager(frameLayout!!, params, windowManager, config).exitAnim()
+            AnimatorManager(frameLayout!!, params!!, windowManager!!, config).exitAnim()
         if (animator == null) remove() else {
             // 二次判断，防止重复调用引发异常
             if (config.isAnim) return
             config.isAnim = true
-            params.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE or FLAG_LAYOUT_NO_LIMITS
+            params!!.flags = FLAG_NOT_TOUCH_MODAL or FLAG_NOT_FOCUSABLE or FLAG_LAYOUT_NO_LIMITS
             animator.addListener(object : Animator.AnimatorListener {
                 override fun onAnimationRepeat(animation: Animator?) {}
 
@@ -462,25 +480,27 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
     /**
      * 退出动画执行结束/没有退出动画，进行回调、移除等操作
      */
-    fun remove(force: Boolean = false) = try {
-        config.isAnim = false
-        FloatingWindowManager.remove(config.floatTag)
-        // removeView是异步删除，在Activity销毁的时候会导致窗口泄漏，所以使用removeViewImmediate直接删除view
-        windowManager.run { if (force) removeViewImmediate(frameLayout) else removeView(frameLayout) }
-    } catch (e: Exception) {
-        Logger.e("浮窗关闭出现异常：$e")
+    fun remove(force: Boolean = false) {
+        try {
+            config.isAnim = false
+            FloatingWindowManager.remove(config.floatTag)
+            // removeView是异步删除，在Activity销毁的时候会导致窗口泄漏，所以使用removeViewImmediate直接删除view
+            windowManager?.run { if (force) removeViewImmediate(frameLayout) else removeView(frameLayout) }
+        } catch (e: Exception) {
+            Logger.e("浮窗关闭出现异常：$e")
+        }
     }
 
     fun removeView() = try {
         config.isAnim = false
         // removeView是异步删除，在Activity销毁的时候会导致窗口泄漏，所以使用removeViewImmediate直接删除view
-        windowManager.run { removeView(frameLayout) }
+        windowManager?.run { removeView(frameLayout) }
     } catch (e: Exception) {
         Logger.e("浮窗关闭出现异常：$e")
     }
 
     fun showView() = try {
-        windowManager.run { addView(frameLayout, params) }
+        windowManager?.run { addView(frameLayout, params) }
     } catch (e: Exception) {
         Logger.e("浮窗关闭出现异常：$e")
     }
@@ -490,15 +510,16 @@ internal class FloatingWindowHelper(val context: Context, var config: FloatConfi
      */
     fun updateFloat(x: Int, y: Int, width: Int = -1, height: Int = -1) {
         frameLayout?.let {
+            if (windowManager == null || params == null) return@let
             if (x == -1 && y == -1 && width == -1 && height == -1) {
                 // 未指定具体坐标，执行吸附动画
-                it.postDelayed({ touchUtils.updateFloat(it, params, windowManager) }, 200)
+                it.postDelayed({ touchUtils.updateFloat(it, params!!, windowManager!!) }, 200)
             } else {
-                if (x != -1) params.x = x
-                if (y != -1) params.y = y
-                if (width != -1) params.width = width
-                if (height != -1) params.height = height
-                windowManager.updateViewLayout(it, params)
+                if (x != -1) params!!.x = x
+                if (y != -1) params!!.y = y
+                if (width != -1) params!!.width = width
+                if (height != -1) params!!.height = height
+                windowManager!!.updateViewLayout(it, params)
             }
         }
     }
