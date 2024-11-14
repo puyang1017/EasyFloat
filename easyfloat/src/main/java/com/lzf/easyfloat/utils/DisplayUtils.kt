@@ -177,6 +177,8 @@ object DisplayUtils {
     }
 
     fun isLandscape(context: Context): Boolean {
-        return ((context as Activity).application.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+        return ((context as Activity).resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE).apply {
+            Logger.i("isLandscape: $this")
+        }
     }
 }
